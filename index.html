@@ -3,497 +3,586 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Malla Curricular - Contador Público (FCEA UDELAR)</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<title>Malla interactiva - Contador Público (FCEA UDELAR)</title>
 <style>
   :root{
-    --bg:#f6f8fb;
-    --card:#ffffff;
-    --muted:#6b7280;
-    --accent:#6b9bd6;
-    --accent-2:#9ad3c9;
-    --danger:#ef4444;
+    --bg:#faf9f7;
+    --card-shadow: 0 6px 18px rgba(25,25,25,0.06);
     --glass: rgba(255,255,255,0.6);
-    --soft-shadow: 0 6px 18px rgba(44,62,80,0.08);
-    font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    --radius:12px;
+    --gap:14px;
+    --accent:#446;
+    font-family: Inter, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color-scheme: light;
   }
+
   body{
     margin:0;
-    background: linear-gradient(180deg, #f6f8fb 0%, #ffffff 100%);
-    color:#0f172a;
+    background: linear-gradient(180deg, #fbfbfb 0%, #f6f7fb 100%);
+    color:#24303b;
     padding:28px;
+    font-size:15px;
+    -webkit-font-smoothing:antialiased;
   }
+
   header{
     display:flex;
     align-items:center;
-    gap:18px;
+    gap:14px;
     margin-bottom:18px;
   }
-  h1{margin:0;font-weight:600;font-size:20px}
-  .sub{color:var(--muted);font-size:13px}
-  .controls{margin-left:auto;display:flex;gap:8px;align-items:center}
-  button, .btn {
-    background:var(--card);
-    border:1px solid rgba(15,23,42,0.06);
-    padding:8px 12px;
-    border-radius:10px;
-    box-shadow:var(--soft-shadow);
-    cursor:pointer;
-    font-size:13px;
-  }
-  .btn-primary{
-    background:linear-gradient(90deg,var(--accent),var(--accent-2));
-    color:white;border:none;
-  }
-  .layout{
+  h1{ margin:0; font-size:20px; letter-spacing:-0.2px; }
+  p.lead{ margin:0; opacity:0.7; font-size:13px }
+
+  .board {
     display:grid;
     grid-template-columns: repeat(4, 1fr);
-    gap:14px;
+    gap:var(--gap);
+    margin-top:18px;
   }
-  @media (max-width:1100px){
-    .layout{grid-template-columns: repeat(2, 1fr);}
-  }
-  @media (max-width:600px){
-    .layout{grid-template-columns: 1fr;}
-  }
+
   .column{
-    background:linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,255,255,0.85));
-    border-radius:12px;padding:12px;box-shadow:var(--soft-shadow);
-    min-height:120px;
+    background:transparent;
+    border-radius:var(--radius);
+    padding:12px;
+    min-width:240px;
   }
-  .col-title{font-weight:600;margin-bottom:8px}
-  .course{
-    background:var(--card);
+
+  .column h3{
+    margin:0 0 10px 0;
+    font-size:14px;
+    color:#2b3a45;
+  }
+
+  .course {
+    position:relative;
+    border-radius:10px;
+    padding:10px 12px;
+    margin-bottom:10px;
+    box-shadow: var(--card-shadow);
+    background:linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.85));
+    cursor:pointer;
+    transition: transform .12s ease, box-shadow .12s ease, opacity .12s;
+    display:flex;
+    gap:10px;
+    align-items:center;
+    user-select:none;
+  }
+
+  .course.locked{ opacity:0.55; cursor:default; transform: none; }
+  .course.approved{
+    border:2px solid rgba(68,109,255,0.12);
+    box-shadow: 0 8px 24px rgba(50,80,200,0.06);
+    transform: translateY(-2px);
+  }
+
+  .course .left {
+    width:8px; height:40px; border-radius:8px;
+    flex:0 0 8px;
+  }
+
+  .course .meta{
+    flex:1;
+  }
+  .course .title{ font-weight:600; font-size:13px; margin-bottom:4px }
+  .course .sub{ font-size:12px; opacity:0.75 }
+
+  .credits {
+    font-weight:700;
+    font-size:13px;
+    min-width:40px;
+    text-align:right;
+    color:#2b3a45;
+  }
+
+  /* Pastel colors per area */
+  .area-Contabilidad{ background: linear-gradient(180deg,#f0f8ff, #eef7fc); }
+  .area-Administración{ background: linear-gradient(180deg,#fff8f0,#fff3ee); }
+  .area-Economía{ background: linear-gradient(180deg,#f7fff5,#eefdf2); }
+  .area-Métodos{ background: linear-gradient(180deg,#fff7ff,#f9f0ff); }
+  .area-Impuestos{ background: linear-gradient(180deg,#fffaf6,#fff6f2); }
+  .area-Gestión{ background: linear-gradient(180deg,#f6fbff,#eef8ff); }
+  .area-Integradoras{ background: linear-gradient(180deg,#fbf9ff,#f6f4ff); }
+
+  /* map area class names used in data */
+  .area-Contabilidad\ y\ Auditoría{ background: linear-gradient(180deg,#f0f8ff, #eef7fc); }
+  .area-Administración{ background: linear-gradient(180deg,#fff8f0,#fff3ee); }
+  .area-Economía{ background: linear-gradient(180deg,#f7fff5,#eefdf2); }
+  .area-Métodos\ Cuantitativos{ background: linear-gradient(180deg,#fff7ff,#f9f0ff); }
+  .area-Impuestos\ y\ Normativa{ background: linear-gradient(180deg,#fffaf6,#fff6f2); }
+  .area-Gestión\ y\ Tecnología{ background: linear-gradient(180deg,#f6fbff,#eef8ff); }
+  .area-Actividades\ Integradoras{ background: linear-gradient(180deg,#fbf9ff,#f6f4ff); }
+
+  /* small pill for area */
+  .pill {
+    font-size:11px;
+    padding:4px 8px;
+    border-radius:999px;
+    background:rgba(255,255,255,0.6);
+    box-shadow:inset 0 -2px 0 rgba(0,0,0,0.03);
+    display:inline-block;
+    margin-top:6px;
+  }
+
+  .controls {
+    display:flex;
+    gap:8px;
+    align-items:center;
+    margin-left:auto;
+  }
+
+  .summary {
+    margin-top:16px;
+    display:flex;
+    gap:10px;
+    align-items:center;
+    flex-wrap:wrap;
+  }
+
+  .stat {
+    background:linear-gradient(180deg, #fff, #fbfbff);
+    border-radius:10px;
+    padding:10px 12px;
+    box-shadow: var(--card-shadow);
+    min-width:160px;
+  }
+  .stat strong{ display:block; font-size:18px }
+  .stat small{ color:#556; opacity:0.8 }
+
+  /* tooltip */
+  .tooltip {
+    position:absolute;
+    z-index:40;
+    left:calc(100% + 12px);
+    top:8px;
+    min-width:220px;
+    background:linear-gradient(180deg,#ffffff,#f8fbff);
     border-radius:10px;
     padding:10px;
-    margin-bottom:10px;
-    border:1px solid rgba(15,23,42,0.04);
-    box-shadow: 0 6px 14px rgba(12,18,30,0.03);
-    position:relative;
-    cursor:pointer;
-    transition:transform .12s ease, box-shadow .12s;
+    box-shadow: 0 8px 30px rgba(20,30,60,0.12);
+    font-size:13px;
+    display:none;
   }
-  .course:hover{transform:translateY(-4px)}
-  .course .title{font-weight:600;font-size:14px}
-  .course .meta{font-size:12px;color:var(--muted);margin-top:6px;display:flex;gap:8px;flex-wrap:wrap}
-  .course.approved{
-    border-left:6px solid #34d399;
-    opacity:0.9;
-    background:linear-gradient(90deg, rgba(52,211,153,0.06), rgba(255,255,255,0.02));
+  .course:hover .tooltip{ display:block; }
+
+  .tooltip .miss{
+    display:flex; gap:8px; align-items:flex-start; margin-bottom:6px;
   }
-  .course.blocked{
-    filter:grayscale(.06) contrast(.95);
-    opacity:.95;
+  .tooltip .miss b{ display:block; font-size:13px }
+  .small-muted{ font-size:12px; color:#4b5661; opacity:0.85 }
+
+  footer{
+    margin-top:26px;
+    font-size:13px;
+    color:#4b5661;
   }
-  .overlay-locked{
-    position:absolute;inset:0;background:linear-gradient(0deg, rgba(255,255,255,0.6), transparent);
-    display:flex;align-items:center;justify-content:flex-end;padding:8px;border-radius:10px;pointer-events:none;
+
+  /* responsive */
+  @media (max-width:1000px){
+    .board{ grid-template-columns: repeat(2,1fr); }
   }
-  .padlock{font-size:14px;color:var(--muted);margin-right:6px}
-  .tooltip{
-    position:absolute;z-index:30;background: #0f172a;color:white;padding:8px 10px;border-radius:8px;font-size:13px;
-    box-shadow: 0 8px 30px rgba(2,6,23,0.2);max-width:260px;display:none;
+  @media (max-width:640px){
+    .board{ grid-template-columns: 1fr; }
   }
-  .course:hover .tooltip{display:block}
-  .small{font-size:12px;color:var(--muted)}
-  .legend{display:flex;gap:10px;align-items:center;margin-top:8px}
-  .legend .item{display:flex;gap:8px;align-items:center}
-  .chip{width:12px;height:12px;border-radius:4px}
-  .stats{margin-top:12px;font-size:13px;color:var(--muted)}
-  footer{margin-top:18px;color:var(--muted);font-size:13px}
-  .reset{background:transparent;border:1px dashed rgba(15,23,42,0.06);padding:6px 8px;border-radius:8px}
-  /* tooltip arrow */
-  .tooltip::after{content:"";position:absolute;left:12px;bottom:-6px;width:12px;height:12px;background:#0f172a;transform:rotate(45deg)}
-  .prereq-list{margin-top:8px;font-size:12px;color:var(--muted)}
+
+  /* credit progress bar */
+  .bar {
+    height:8px;
+    background:linear-gradient(90deg,#eef2ff, #f4fff2);
+    border-radius:6px;
+    overflow:hidden;
+    margin-top:8px;
+  }
+  .bar > i{ display:block; height:100%; width:0%; background:linear-gradient(90deg,#6b8cff,#6bd9b6) }
+
+  /* small legend */
+  .legend{ display:flex; gap:8px; flex-wrap:wrap; margin-top:8px }
+  .legend .item{ font-size:12px; display:flex; gap:6px; align-items:center; }
+  .legend .sw{ width:12px; height:12px; border-radius:3px; box-shadow:0 1px 0 rgba(0,0,0,0.06) }
 </style>
 </head>
 <body>
-<header>
-  <div>
-    <h1>Malla Curricular - Contador Público (FCEA UDELAR)</h1>
-    <div class="sub">Interactiva · Guardado local · Requisitos bloqueantes · Tooltips</div>
-  </div>
-  <div class="controls">
-    <div class="small" id="creditsSummary">Créditos: 0</div>
-    <button class="btn" id="exportBtn" title="Exportar/Importar progreso">Exportar</button>
-    <button class="btn reset" id="resetBtn" title="Restablecer todo">Restablecer</button>
-  </div>
-</header>
+  <header>
+    <div>
+      <h1>Malla interactiva — Contador Público (FCEA UDELAR)</h1>
+      <p class="lead">Haz clic en una materia para marcarla aprobada. Las materias que dependan de requisitos aparecerán bloqueadas hasta que cumplas lo necesario. Progreso guardado en tu navegador.</p>
+    </div>
+    <div style="margin-left:auto">
+      <button id="resetBtn" title="Borrar progreso y reiniciar" style="padding:10px 12px;border-radius:10px;border:0;background:#fff;box-shadow:var(--card-shadow);cursor:pointer">Reiniciar progreso</button>
+    </div>
+  </header>
 
-<main>
-  <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start">
-    <div style="flex:1;min-width:300px">
+  <section class="summary" id="summary">
+    <div class="stat">
+      <small>Total créditos aprobados</small>
+      <strong id="totalCredits">0</strong>
+      <div class="bar" aria-hidden><i id="barFill"></i></div>
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <div style="font-size:12px;color:#546">Meta 120</div>
+        <div style="font-size:12px;color:#546">Meta 160</div>
+        <div style="font-size:12px;color:#546">Meta 180</div>
+      </div>
+    </div>
+
+    <div class="stat">
+      <small>Créditos por área (ejemplos)</small>
+      <div id="areaCredits" style="margin-top:8px;display:flex;flex-direction:column;gap:6px"></div>
+    </div>
+
+    <div class="stat" style="flex:1">
+      <small>Leyenda</small>
       <div class="legend">
-        <div class="item"><div class="chip" style="background: #ffffff;border:1px solid rgba(15,23,42,0.06)"></div><div class="small">Pendiente</div></div>
-        <div class="item"><div class="chip" style="background:#34d399"></div><div class="small">Aprobada</div></div>
-        <div class="item"><div class="chip" style="background:linear-gradient(90deg,var(--accent),var(--accent-2));border-radius:4px"></div><div class="small">Bloqueada (faltan prereq)</div></div>
+        <div class="item"><div class="sw" style="background:#eef7fc"></div> Contabilidad y Auditoría</div>
+        <div class="item"><div class="sw" style="background:#fff3ee"></div> Administración</div>
+        <div class="item"><div class="sw" style="background:#eefdf2"></div> Economía</div>
+        <div class="item"><div class="sw" style="background:#f9f0ff"></div> Métodos Cuantitativos</div>
+        <div class="item"><div class="sw" style="background:#fff6f2"></div> Impuestos y Normativa</div>
+        <div class="item"><div class="sw" style="background:#eef8ff"></div> Gestión y Tecnología</div>
       </div>
-      <div class="stats" id="areaStats"></div>
+      <div style="margin-top:8px; font-size:12px; color:#556">Los tooltips indican exactamente qué requisito falta: materias, créditos totales y créditos por área.</div>
     </div>
-    <div style="display:flex;gap:8px;align-items:center">
-      <div class="small">Leyenda de áreas:</div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;max-width:560px">
-        <div class="small" style="background:#eaf2fb;padding:6px 8px;border-radius:8px">Contabilidad y Auditoría</div>
-        <div class="small" style="background:#f0fdf4;padding:6px 8px;border-radius:8px">Administración</div>
-        <div class="small" style="background:#fff7ed;padding:6px 8px;border-radius:8px">Economía</div>
-        <div class="small" style="background:#f8fafc;padding:6px 8px;border-radius:8px">Métodos Cuantitativos</div>
-        <div class="small" style="background:#fef2f2;padding:6px 8px;border-radius:8px">Impuestos y Normativa</div>
-        <div class="small" style="background:#eef2ff;padding:6px 8px;border-radius:8px">Gestión y Tecnología</div>
-        <div class="small" style="background:#f3f4f6;padding:6px 8px;border-radius:8px">Actividades Integradoras</div>
-      </div>
-    </div>
-  </div>
+  </section>
 
-  <div style="height:16px"></div>
+  <main class="board" id="board">
+    <!-- Columns generated by JS -->
+  </main>
 
-  <div class="layout" id="grid">
-    <!-- columnas se inyectan por JS -->
-  </div>
-
-  <div style="height:14px"></div>
-  <div class="small prereq-list">
-    <strong>Nota:</strong> los prerequisitos pueden ser cursos específicos y/u objetivos de avance en créditos (por ejemplo: "120 créditos", "30 créditos en área Economía"). Las materias con prerequisitos que no se cumplen aparecerán bloqueadas y mostrarán en el tooltip qué falta.
-  </div>
-</main>
-
-<footer>
-  Diseñado para revisión y uso personal · Progreso guardado en el navegador (localStorage).
-</footer>
+  <footer>
+    Diseño simple — guarda en el navegador. Puedes exportar tu progreso copiando el contenido de localStorage para la clave <code>malla_contador_v1</code>.
+  </footer>
 
 <script>
 /*
-  Malla curricular - objeto con materias y prerequisitos.
-  Requisitos soportados:
-   - prereqCourses: array de nombres de cursos (exact match)
-   - minTotalCredits: número
-   - areaCredits: [{area: 'Economía', min: 30}]
-  Nota: si un prereq coincide con el mismo curso (auto-requisito erróneo), se ignora.
+  Single-file interactive curriculum.
+  - Course objects have:
+    id, title, credits, area, semester, prereqs (array), note
+  - prereqs: can be strings referring to course ids, or special objects:
+      {type:'credits', value:120}
+      {type:'areaCredits', area:'Contabilidad y Auditoría', value:60}
+  - We compute which are unlocked based on approved courses and totals.
 */
-const STORAGE_KEY = 'mallaContadorFCEA_v1';
 
-// Lista de materias según la estructura que diste (nombres copiados tal cual cuando fue claro)
+const STORAGE_KEY = "malla_contador_v1";
+
+/* Course data */
 const courses = [
-  // Primer semestre
-  { id: 'Conceptos Contables', title: 'Conceptos Contables', credits: 10, area: 'Contabilidad y Auditoría', semester: 'Primer semestre', prereqCourses: [] },
-  { id: 'Administración y Gestión de las Organizaciones I', title: 'Administración y Gestión de las Organizaciones I', credits: 10, area: 'Administración', semester: 'Primer semestre', prereqCourses: [] },
-  { id: 'Introducción a la Microeconomía', title: 'Introducción a la Microeconomía', credits: 10, area: 'Economía', semester: 'Primer semestre', prereqCourses: [] },
-  { id: 'Cálculo I', title: 'Cálculo I', credits: 10, area: 'Métodos Cuantitativos', semester: 'Primer semestre', prereqCourses: [] },
+  // semestre 1
+  { id:'T1_CONC', title:'Conceptos Contables', credits:10, area:'Contabilidad y Auditoría', semester:1 },
+  { id:'T1_ADM1', title:'Administración y Gestión de las Organizaciones I', credits:10, area:'Administración', semester:1 },
+  { id:'T1_MICRO', title:'Introducción a la Microeconomía', credits:10, area:'Economía', semester:1 },
+  { id:'T1_CAL1', title:'Cálculo I', credits:10, area:'Métodos Cuantitativos', semester:1 },
 
-  // Segundo semestre
-  { id: 'Contabilidad General I', title: 'Contabilidad General I', credits: 10, area: 'Contabilidad y Auditoría', semester: 'SEGUNDO SEMESTRE', prereqCourses: ['Conceptos Contables'] },
-  { id: 'Derecho y Actividad Empresarial I', title: 'Derecho y Actividad Empresarial I', credits: 10, area: 'Impuestos y Normativa', semester: 'SEGUNDO SEMESTRE', prereqCourses: [] },
-  // Aquí había un texto "Introducción a al Macroeconomía (Requiere Introducción a la Macroeconomía)" - asumimos que no requiere a sí misma (error tipográfico).
-  { id: 'Introducción a la Macroeconomía', title: 'Introducción a la Macroeconomía', credits: 10, area: 'Economía', semester: 'SEGUNDO SEMESTRE', prereqCourses: [] },
+  // semestre 2
+  { id:'T2_CG1', title:'Contabilidad General I', credits:10, area:'Contabilidad y Auditoría', semester:2, prereqs:['T1_CONC'] },
+  { id:'T2_DAE1', title:'Derecho y Actividad Empresarial I', credits:10, area:'Impuestos y Normativa', semester:2 },
+  // CORRECCIÓN: la materia "Introducción a la Macroeconomía" no puede requerir a si misma.
+  // Asumimos que requiere "Introducción a la Microeconomía".
+  { id:'T2_MACRO', title:'Introducción a la Macroeconomía', credits:10, area:'Economía', semester:2, prereqs:['T1_MICRO'] },
 
-  // Tercer semestre
-  { id: 'Contabilidad General II', title: 'Contabilidad General II', credits: 10, area: 'Contabilidad y Auditoría', semester: 'Tercer semestre', prereqCourses: ['Contabilidad General I'] },
-  { id: 'Derecho y Actividad Empresarial II', title: 'Derecho y Actividad Empresarial II', credits: 5, area: 'Impuestos y Normativa', semester: 'Tercer semestre', prereqCourses: [] },
-  { id: 'Introducción a la Estadística', title: 'Introducción a la Estadística', credits: 10, area: 'Métodos Cuantitativos', semester: 'Tercer semestre', prereqCourses: ['Cálculo I'] },
-  { id: 'Procesos Contables', title: 'Procesos Contables', credits: 5, area: 'Contabilidad y Auditoría', semester: 'Tercer semestre', prereqCourses: ['Administración y Gestión de las Organizaciones I','Conceptos Contables'] },
+  // semestre 3
+  { id:'T3_CG2', title:'Contabilidad General II', credits:10, area:'Contabilidad y Auditoría', semester:3, prereqs:['T2_CG1'] },
+  { id:'T3_DAE2', title:'Derecho y Actividad Empresarial II', credits:5, area:'Impuestos y Normativa', semester:3 },
+  { id:'T3_EST', title:'Introducción a la Estadística', credits:10, area:'Métodos Cuantitativos', semester:3, prereqs:['T1_CAL1'] },
+  { id:'T3_PROC', title:'Procesos Contables', credits:5, area:'Contabilidad y Auditoría', semester:3, prereqs:['T1_ADM1','T1_CONC'] },
 
-  // Cuarto semestre
-  { id: 'Contabilidad General III', title: 'Contabilidad General III', credits: 10, area: 'Contabilidad y Auditoría', semester: 'Cuarto semestre', prereqCourses: ['Contabilidad General II'] },
-  { id: 'Matemática Financiera', title: 'Matemática Financiera', credits: 10, area: 'Métodos Cuantitativos', semester: 'Cuarto semestre', prereqCourses: ['Cálculo I','Introducción a la Estadística'] },
-  { id: 'Derecho Digital (2024)', title: 'Derecho Digital (2024)', credits: 5, area: 'Gestión y Tecnología', semester: 'Cuarto semestre', prereqCourses: ['Derecho y Actividad Empresarial I','Derecho y Actividad Empresarial II'] },
-  { id: 'Legislación Laboral y Seguridad Social', title: 'Legislación Laboral y Seguridad Social', credits: 10, area: 'Impuestos y Normativa', semester: 'Cuarto semestre', prereqCourses: ['Conceptos Contables','Derecho y Actividad Empresarial I'] },
+  // semestre 4
+  { id:'T4_CG3', title:'Contabilidad General III', credits:10, area:'Contabilidad y Auditoría', semester:4, prereqs:['T3_CG2'] },
+  { id:'T4_MFIN', title:'Matemática Financiera', credits:10, area:'Métodos Cuantitativos', semester:4, prereqs:['T1_CAL1','T3_EST'] },
+  { id:'T4_DD', title:'Derecho Digital (2024)', credits:5, area:'Gestión y Tecnología', semester:4, prereqs:['T2_DAE1','T3_DAE2'] },
+  { id:'T4_LAB', title:'Legislación Laboral y Seguridad Social', credits:10, area:'Impuestos y Normativa', semester:4, prereqs:['T1_CONC','T2_DAE1'] },
 
-  // Quinto semestre
-  { id: 'Modelos y Sistemas de Costos', title: 'Modelos y Sistemas de Costos', credits: 10, area: 'Contabilidad y Auditoría', semester: 'Quinto semestre', prereqCourses: ['Contabilidad General III'] },
-  { id: 'Derecho Tributario', title: 'Derecho Tributario', credits: 10, area: 'Impuestos y Normativa', semester: 'Quinto semestre', prereqCourses: ['Derecho y Actividad Empresarial I'] },
-  { id: 'Contabilidad Social y Ambiental (2024)', title: 'Contabilidad Social y Ambiental (2024)', credits: 5, area: 'Contabilidad y Auditoría', semester: 'Quinto semestre', prereqCourses: ['Contabilidad General III'] },
-  { id: 'Ética y Ejercicio Profesional', title: 'Ética y Ejercicio Profesional', credits: 5, area: 'Actividades Integradoras', semester: 'Quinto semestre', prereqCourses: ['Contabilidad General III','Derecho y Actividad Empresarial I'] },
+  // semestre 5
+  { id:'T5_COST', title:'Modelos y Sistemas de Costos', credits:10, area:'Contabilidad y Auditoría', semester:5, prereqs:['T4_CG3'] },
+  { id:'T5_TRIB', title:'Derecho Tributario', credits:10, area:'Impuestos y Normativa', semester:5, prereqs:['T2_DAE1'] },
+  { id:'T5_SOC', title:'Contabilidad Social y Ambiental (2024)', credits:5, area:'Contabilidad y Auditoría', semester:5, prereqs:['T4_CG3'] },
+  { id:'T5_ETICA', title:'Ética y Ejercicio Profesional', credits:5, area:'Actividades Integradoras', semester:5, prereqs:['T4_CG3','T2_DAE1'] },
 
-  // Sexto semestre
-  { id: 'Contabilidad Superior I', title: 'Contabilidad Superior I', credits: 10, area: 'Contabilidad y Auditoría', semester: 'Sexto semestre', prereqCourses: ['Contabilidad General III'] },
-  { id: 'Contabilidad Gerencial', title: 'Contabilidad Gerencial', credits: 10, area: 'Gestión y Tecnología', semester: 'Sexto semestre',
-    // requiere dos cursos + avance total 160 créditos (según lo indicado)
-    prereqCourses: ['Modelos y Sistemas de Costos','Matemática Financiera'],
-    minTotalCredits: 160
-  },
-  { id: 'Tributaria I', title: 'Tributaria I', credits: 10, area: 'Impuestos y Normativa', semester: 'Sexto semestre', prereqCourses: ['Contabilidad General III','Derecho Tributario'] },
-  { id: 'Administración y planificación Financiera', title: 'Administración y planificación Financiera', credits: 5, area: 'Administración', semester: 'Sexto semestre',
-    prereqCourses: ['Matemática Financiera','Contabilidad General III','Introducción a la Estadística'],
-    minTotalCredits: 120
-  },
-  { id: 'Control Interno', title: 'Control Interno', credits: 10, area: 'Gestión y Tecnología', semester: 'Sexto semestre', prereqCourses: ['Contabilidad General III','Procesos Contables'] },
+  // semestre 6
+  { id:'T6_CS1', title:'Contabilidad Superior I', credits:10, area:'Contabilidad y Auditoría', semester:6, prereqs:['T4_CG3'] },
+  // Contabilidad Gerencial requiere modelos y matematica y además 160 créditos acumulados
+  { id:'T6_CGER', title:'Contabilidad Gerencial', credits:10, area:'Gestión y Tecnología', semester:6, prereqs:['T5_COST','T4_MFIN',{type:'credits',value:160}] },
+  { id:'T6_TRIB1', title:'Tributaria I', credits:10, area:'Impuestos y Normativa', semester:6, prereqs:['T4_CG3','T5_TRIB'] },
+  { id:'T6_ADMF', title:'Administración y planificación Financiera', credits:5, area:'Administración', semester:6, prereqs:[{type:'credits',value:120}, 'T4_MFIN','T4_CG3','T3_EST'] },
+  { id:'T6_CTRL', title:'Control Interno', credits:10, area:'Gestión y Tecnología', semester:6, prereqs:['T4_CG3','T3_PROC'] },
 
-  // Séptimo semestre
-  { id: 'Auditoría I', title: 'Auditoría I', credits: 10, area: 'Contabilidad y Auditoría', semester: 'Séptimo semestre',
-    prereqCourses: ['Derecho y Actividad Empresarial II','Legislación Laboral y Seguridad Social','Control Interno','Contabilidad Superior I'],
-    minTotalCredits: 160
-  },
-  { id: 'Tributaria II', title: 'Tributaria II', credits: 10, area: 'Impuestos y Normativa', semester: 'Séptimo semestre', prereqCourses: ['Tributaria I'] },
-  { id: 'Finanzas Corporativas', title: 'Finanzas Corporativas', credits: 10, area: 'Administración', semester: 'Séptimo semestre',
-    prereqCourses: ['Modelos y Sistemas de Costos','Matemática Financiera','Introducción a la Estadística','Administración y Gestión de las Organizaciones I'],
-    minTotalCredits: 180,
-    areaCredits: [{area:'Economía', min:30}]
-  },
+  // semestre 7
+  { id:'T7_AUD1', title:'Auditoría I', credits:10, area:'Contabilidad y Auditoría', semester:7, prereqs:[{type:'credits',value:160}, 'T3_DAE2','T4_LAB','T6_CTRL','T6_CS1'] },
+  { id:'T7_TRIB2', title:'Tributaria II', credits:10, area:'Impuestos y Normativa', semester:7, prereqs:['T6_TRIB1'] },
+  // Finanzas Corporativas has a complex requirement: 180 credits, Modelos y Sistemas de Costos, Mat. Fin, Intro Estad, Adm y GOrganizaciones I, 30 créditos en área economía
+  { id:'T7_FINCO', title:'Finanzas Corporativas', credits:10, area:'Administración', semester:7, prereqs:['T5_COST','T4_MFIN','T3_EST','T1_ADM1',{type:'credits',value:180},{type:'areaCredits',area:'Economía',value:30}] },
 
-  // Octavo semestre
-  { id: 'Auditoría Interna (2024)', title: 'Auditoría Interna (2024)', credits: 5, area: 'Gestión y Tecnología', semester: 'Octavo semestre', prereqCourses: ['Auditoría I'] },
-  { id: 'Informes Profesionales del Contador Público', title: 'Informes Profesionales del Contador Público', credits: 10, area: 'Contabilidad y Auditoría', semester: 'Octavo semestre', prereqCourses: ['Auditoría I'] },
-  { id: 'Contabilidad en sistemas Integrados de Gestión (SIG/ERP) (2024)', title: 'Contabilidad en sistemas Integrados de Gestión (SIG/ERP) (2024)', credits: 5, area: 'Gestión y Tecnología', semester: 'Octavo semestre',
-    prereqCourses: [],
-    // requiere avance de 180 créditos y 60 créditos en área contable y/o gestión y tecnología (simplificamos: requiere 180 totales y 60 en área Contabilidad y Auditoría o Gestión y Tecnología)
-    minTotalCredits: 180,
-    areaCreditsOr: [{areas: ['Contabilidad y Auditoría','Gestión y Tecnología'], min:60}]
-  },
+  // semestre 8
+  { id:'T8_AUDINT', title:'Auditoría Interna (2024)', credits:5, area:'Gestión y Tecnología', semester:8, prereqs:['T7_AUD1'] },
+  { id:'T8_INF', title:'Informes Profesionales del Contador Público', credits:10, area:'Contabilidad y Auditoría', semester:8, prereqs:['T7_AUD1'] },
+  { id:'T8_SIG', title:'Contabilidad en sistemas Integrados de Gestión (SIG/ERP) (2024)', credits:5, area:'Gestión y Tecnología', semester:8, prereqs:[{type:'credits',value:180},{type:'areaCredits',area:'Contabilidad y Auditoría', value:60}] },
 
-  // Perfil Asesoría Financiera (optativas / perfil)
-  { id: 'Principios de Análisis Macroeconómico Aplicado', title: 'Principios de Análisis Macroeconómico Aplicado', credits: 10, area: 'Economía', semester: 'Perfil Asesoría Financiera', prereqCourses: ['Introducción a la Macroeconomía'] },
-  { id: 'Proyectos de Inversión', title: 'Proyectos de Inversión', credits: 5, area: 'Administración', semester: 'Perfil Asesoría Financiera', prereqCourses: [] },
-  { id: 'Economía y Gestión Bancaria', title: 'Economía y Gestión Bancaria', credits: 10, area: 'Economía', semester: 'Perfil Asesoría Financiera', prereqCourses: [] },
-  { id: 'Fintech', title: 'Fintech', credits: 5, area: 'Gestión y Tecnología', semester: 'Perfil Asesoría Financiera', prereqCourses: [] },
-  { id: 'Economía y Finanzas Públicas', title: 'Economía y Finanzas Públicas', credits: 10, area: 'Economía', semester: 'Perfil Asesoría Financiera', prereqCourses: ['Introducción a la Microeconomía'] }
+  // Perfil / optativas list (we'll put many in same column for demonstration)
+  { id:'P_ASF', title:'Perfil Asesoría Financiera - Principios de Análisis Macroeconómico Aplicado', credits:10, area:'Economía', semester:8, prereqs:['T2_MACRO'] },
+  { id:'P_INV', title:'Proyectos de Inversión', credits:5, area:'Administración', semester:8 },
+  { id:'P_BAN', title:'Economía y Gestión Bancaria', credits:10, area:'Economía', semester:8 },
+  { id:'P_FINTECH', title:'Fintech', credits:5, area:'Gestión y Tecnología', semester:8 },
+  { id:'P_EFP', title:'Economía y Finanzas Públicas', credits:10, area:'Economía', semester:8, prereqs:['T1_MICRO'] }
 ];
 
-// Normalizar IDs y crear map
-const courseMap = {};
-courses.forEach(c => courseMap[c.id] = c);
+/* Helper structures */
+const semesterTitles = {
+  1: "PRIMER SEMESTRE",
+  2: "SEGUNDO SEMESTRE",
+  3: "TERCER SEMESTRE",
+  4: "CUARTO SEMESTRE",
+  5: "QUINTO SEMESTRE",
+  6: "SEXTO SEMESTRE",
+  7: "SÉPTIMO SEMESTRE",
+  8: "OCTAVO SEMESTRE / OPCIONES"
+};
 
-// Carga de progreso desde localStorage
-let state = { approved: {} };
 function loadState(){
-  try{
+  try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if(raw){
-      const parsed = JSON.parse(raw);
-      if(parsed && parsed.approved) state = parsed;
-    }
-  }catch(e){
-    console.warn('Error cargando progreso', e);
-  }
+    if(!raw) return {};
+    return JSON.parse(raw);
+  } catch(e){ return {}; }
 }
-function saveState(){
+function saveState(state){
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
 }
 
-// util: calcular créditos totales aprobados y por área
-function computeCredits(){
+/* Approved map: id -> true */
+let state = loadState();
+if(!state.approved) state.approved = {};
+
+/* Build UI */
+const board = document.getElementById('board');
+
+function groupBySemester(courses){
+  const map = {};
+  for(const c of courses){
+    if(!map[c.semester]) map[c.semester] = [];
+    map[c.semester].push(c);
+  }
+  return map;
+}
+
+/* compute totals given approved set */
+function computeTotals(approved){
   let total = 0;
   const area = {};
-  for(const id of Object.keys(state.approved)){
-    if(state.approved[id]){
-      const c = courseMap[id];
-      if(c){
-        total += c.credits;
-        area[c.area] = (area[c.area]||0) + c.credits;
-      }
+  for(const c of courses){
+    if(approved[c.id]){
+      total += c.credits;
+      area[c.area] = (area[c.area] || 0) + c.credits;
     }
   }
   return { total, area };
 }
 
-// comprobar prereqs de una materia -> devuelve array de strings con requisitos faltantes
-function checkPrereqs(course){
+/* Check prerequisites for a course; return { unlocked:bool, missing:[] } */
+function checkPrereqs(course, approved){
   const missing = [];
-  // cursos
-  if(course.prereqCourses && course.prereqCourses.length){
-    course.prereqCourses.forEach(req => {
-      if(!req) return;
-      if(req === course.id) return; // evitar auto-requisito erróneo
-      if(!state.approved[req]) missing.push(req);
-    });
+  if(!course.prereqs || course.prereqs.length===0) return {unlocked:true, missing:[]};
+  const totals = computeTotals(approved);
+
+  for(const p of course.prereqs){
+    if(typeof p === 'string'){
+      if(!approved[p]) {
+        // find readable title
+        const obj = courses.find(x=>x.id===p);
+        missing.push(obj ? obj.title : p);
+      }
+    } else if(p && typeof p === 'object'){
+      if(p.type === 'credits'){
+        if(totals.total < p.value){
+          missing.push(`${p.value} créditos totales (tienes ${totals.total})`);
+        }
+      } else if(p.type === 'areaCredits'){
+        const have = totals.area[p.area] || 0;
+        if(have < p.value){
+          missing.push(`${p.value} créditos en área "${p.area}" (tienes ${have})`);
+        }
+      }
+    }
   }
-  // minTotalCredits
-  if(course.minTotalCredits){
-    const totals = computeCredits();
-    if(totals.total < course.minTotalCredits) missing.push(`${course.minTotalCredits} créditos totales (tienes ${totals.total})`);
-  }
-  // areaCredits exact
-  if(course.areaCredits && course.areaCredits.length){
-    const totals = computeCredits();
-    course.areaCredits.forEach(ac => {
-      const have = totals.area[ac.area] || 0;
-      if(have < ac.min) missing.push(`${ac.min} créditos en área ${ac.area} (tienes ${have})`);
-    });
-  }
-  // areaCreditsOr (any of areas)
-  if(course.areaCreditsOr && course.areaCreditsOr.length){
-    const totals = computeCredits();
-    course.areaCreditsOr.forEach(t => {
-      const haveAny = t.areas.some(a => (totals.area[a] || 0) >= t.min);
-      if(!haveAny) missing.push(`${t.min} créditos en al menos una de estas áreas: ${t.areas.join(', ')} (tienes ${JSON.stringify(totals.area)})`);
-    });
-  }
-  return missing;
+  return { unlocked: missing.length===0, missing };
 }
 
-// Render
-const grid = document.getElementById('grid');
+/* render board */
 function render(){
-  grid.innerHTML = '';
-  // Agrupar por semester en orden deseado
-  const order = ['Primer semestre','SEGUNDO SEMESTRE','Tercer semestre','Cuarto semestre','Quinto semestre','Sexto semestre','Séptimo semestre','Octavo semestre','Perfil Asesoría Financiera'];
-  for(const sem of order){
+  board.innerHTML = '';
+  const grouped = groupBySemester(courses);
+  // ensure consistent column order (1..4 per row)
+  const sems = Object.keys(semesterTitles).map(Number);
+  for(const sem of sems){
     const col = document.createElement('div');
     col.className = 'column';
     col.dataset.sem = sem;
-    const title = document.createElement('div');
-    title.className = 'col-title';
-    title.textContent = sem;
+    const title = document.createElement('h3');
+    title.textContent = semesterTitles[sem] || `Sem ${sem}`;
     col.appendChild(title);
 
-    const semCourses = courses.filter(c => c.semester === sem);
-    if(semCourses.length === 0){
-      const p = document.createElement('div');
-      p.className = 'small';
-      p.textContent = '—';
-      col.appendChild(p);
-    } else {
-      semCourses.forEach(c => {
-        const card = document.createElement('div');
-        card.className = 'course';
-        if(state.approved[c.id]) card.classList.add('approved');
+    const list = grouped[sem] || [];
+    // sort by title for small nicety
+    list.sort((a,b)=>a.title.localeCompare(b.title,'es'));
 
-        // comprobar si bloqueada
-        const missing = checkPrereqs(c);
-        const blocked = missing.length > 0 && !state.approved[c.id];
-        if(blocked) card.classList.add('blocked');
+    for(const c of list){
+      const totals = computeTotals(state.approved);
+      const check = checkPrereqs(c, state.approved);
+      const approved = !!state.approved[c.id];
+      const courseEl = document.createElement('div');
+      courseEl.className = 'course';
+      if(approved) courseEl.classList.add('approved');
+      if(!check.unlocked && !approved) courseEl.classList.add('locked');
 
-        // contenido
-        const t = document.createElement('div');
-        t.className = 'title';
-        t.textContent = c.title;
-        card.appendChild(t);
+      // left color stripe based on area
+      const left = document.createElement('div');
+      left.className = 'left area-' + cssSafe(c.area);
+      left.style.background = areaGradient(c.area);
+      courseEl.appendChild(left);
 
-        const meta = document.createElement('div');
-        meta.className = 'meta';
-        meta.innerHTML = `<div>${c.credits} cr.</div><div>Área: ${c.area}</div>`;
-        card.appendChild(meta);
+      const meta = document.createElement('div');
+      meta.className = 'meta';
+      const titleEl = document.createElement('div');
+      titleEl.className = 'title';
+      titleEl.textContent = c.title;
+      const sub = document.createElement('div');
+      sub.className = 'sub';
+      sub.innerHTML = `<span class="pill">${c.area}</span>`;
 
-        // small prereq list visible
-        if(c.prereqCourses && c.prereqCourses.length){
-          const pr = document.createElement('div');
-          pr.className = 'small';
-          pr.style.marginTop = '8px';
-          pr.textContent = 'Requiere: ' + c.prereqCourses.join(', ');
-          card.appendChild(pr);
+      meta.appendChild(titleEl);
+      meta.appendChild(sub);
+      courseEl.appendChild(meta);
+
+      const cred = document.createElement('div');
+      cred.className = 'credits';
+      cred.textContent = c.credits + ' cr';
+      courseEl.appendChild(cred);
+
+      // tooltip
+      const tooltip = document.createElement('div');
+      tooltip.className = 'tooltip';
+      if(approved){
+        tooltip.innerHTML = `<div><b>Aprobada</b><div class="small-muted">Guardado en el navegador</div></div>`;
+      } else if(check.unlocked){
+        tooltip.innerHTML = `<div><b>Disponible</b><div class="small-muted">Haz clic para marcar como aprobada.</div></div>`;
+      } else {
+        // show missing list and also show remaining to milestones
+        let html = `<div><b>Bloqueada</b><div class="small-muted">Faltan los siguientes requisitos:</div></div><div style="margin-top:8px">`;
+        for(const m of check.missing){
+          html += `<div class="miss">• <div style="flex:1;"><b>${escapeHtml(m)}</b></div></div>`;
         }
-        if(c.minTotalCredits){
-          const pr2 = document.createElement('div');
-          pr2.className = 'small';
-          pr2.textContent = 'Requiere avance total: ' + c.minTotalCredits + ' créditos';
-          card.appendChild(pr2);
+        // also show remaining for 120/160/180
+        const neededFor = [120,160,180];
+        const totalHave = totals.total;
+        html += `<hr style="border:none;height:8px;margin:8px 0;background:transparent">`;
+        html += `<div style="font-size:12px;color:#445">Progreso créditos totales:</div>`;
+        html += `<div style="font-size:13px;margin-top:6px"><b>${totalHave}</b> aprobados</div>`;
+        for(const n of neededFor){
+          const remain = Math.max(0, n - totalHave);
+          html += `<div class="small-muted" style="margin-top:6px"><b>${remain}</b> créditos faltan para ${n}</div>`;
         }
-        if(c.areaCredits){
-          c.areaCredits.forEach(ac=>{
-            const pr3 = document.createElement('div');
-            pr3.className = 'small';
-            pr3.textContent = `Requiere ${ac.min} créditos en área ${ac.area}`;
-            card.appendChild(pr3);
-          });
-        }
-        if(c.areaCreditsOr){
-          c.areaCreditsOr.forEach(ac=>{
-            const pr3 = document.createElement('div');
-            pr3.className = 'small';
-            pr3.textContent = `Requiere ${ac.min} créditos en una de estas áreas: ${ac.areas.join(', ')}`;
-            card.appendChild(pr3);
-          });
-        }
+        html += `</div>`;
+        tooltip.innerHTML = html;
+      }
 
-        // tooltip con faltantes
-        const tooltip = document.createElement('div');
-        tooltip.className = 'tooltip';
-        if(blocked){
-          tooltip.innerHTML = `<strong>Faltan requisitos:</strong><br><ul>${missing.map(m=>`<li>${m}</li>`).join('')}</ul>`;
+      courseEl.appendChild(tooltip);
+
+      // click behavior
+      courseEl.addEventListener('click', (ev)=>{
+        // if locked and not approved, do nothing (but still show tooltip)
+        const currentlyApproved = !!state.approved[c.id];
+        const nowCheck = checkPrereqs(c, state.approved);
+        if(!nowCheck.unlocked && !currentlyApproved){
+          // show small animation: flash
+          courseEl.animate([{transform:'scale(1)'},{transform:'scale(1.02)'},{transform:'scale(1)'}], {duration:220});
+          return;
+        }
+        // toggle approved
+        if(currentlyApproved){
+          delete state.approved[c.id];
         } else {
-          tooltip.innerHTML = `<strong>${ state.approved[c.id] ? 'Aprobada' : 'Disponible' }</strong><br>Haz clic para marcar${ state.approved[c.id] ? ' como no aprobada' : ' como aprobada' }.`;
+          state.approved[c.id] = true;
         }
-        card.appendChild(tooltip);
-
-        // overlay lock
-        if(blocked){
-          const overlay = document.createElement('div');
-          overlay.className = 'overlay-locked';
-          overlay.innerHTML = `<div style="display:flex;align-items:center;gap:6px"><div class="padlock">🔒</div><div class="small">Bloqueada</div></div>`;
-          card.appendChild(overlay);
-        }
-
-        // click handler
-        card.addEventListener('click', (e)=>{
-          const missingNow = checkPrereqs(c);
-          const isBlocked = missingNow.length > 0 && !state.approved[c.id];
-          if(isBlocked){
-            // mostrar un pequeño efecto visual (temblor) y resaltar tooltip
-            card.animate([{transform:'translateX(-4px)'},{transform:'translateX(4px)'},{transform:'translateX(0)'}],{duration:220});
-            tooltip.style.display = 'block';
-            setTimeout(()=>{ if(!state.approved[c.id]) tooltip.style.display = ''; }, 1400);
-            return;
-          }
-          // toggle aprobado
-          state.approved[c.id] = !state.approved[c.id];
-          saveState();
-          render();
-          updateSummary();
-        });
-
-        col.appendChild(card);
+        saveState(state);
+        updateAll();
       });
+
+      col.appendChild(courseEl);
     }
-    grid.appendChild(col);
+
+    board.appendChild(col);
+  }
+  updateSummary();
+}
+
+/* small utilities */
+function cssSafe(area){
+  return area.replace(/\s+/g,'-').replace(/[^\w\-]/g,'');
+}
+function escapeHtml(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+/* area gradient mapping for stripe */
+function areaGradient(area){
+  // map similar to CSS classes
+  switch(area){
+    case 'Contabilidad y Auditoría': return 'linear-gradient(180deg,#f0f8ff,#eef7fc)';
+    case 'Administración': return 'linear-gradient(180deg,#fff8f0,#fff3ee)';
+    case 'Economía': return 'linear-gradient(180deg,#f7fff5,#eefdf2)';
+    case 'Métodos Cuantitativos': return 'linear-gradient(180deg,#fff7ff,#f9f0ff)';
+    case 'Impuestos y Normativa': return 'linear-gradient(180deg,#fffaf6,#fff6f2)';
+    case 'Gestión y Tecnología': return 'linear-gradient(180deg,#f6fbff,#eef8ff)';
+    case 'Actividades Integradoras': return 'linear-gradient(180deg,#fbf9ff,#f6f4ff)';
+    default: return 'linear-gradient(180deg,#fff,#f7f7ff)';
   }
 }
 
-// Resumen de créditos y áreas
-const creditsSummaryEl = document.getElementById('creditsSummary');
-const areaStatsEl = document.getElementById('areaStats');
+/* Update summary (credits etc) */
 function updateSummary(){
-  const totals = computeCredits();
-  creditsSummaryEl.textContent = `Créditos aprobados: ${totals.total}`;
-  // mostrar por área
-  const parts = Object.entries(totals.area).map(([a, c])=>`${a}: ${c} cr.`).join(' · ');
-  areaStatsEl.textContent = parts ? `Créditos por área — ${parts}` : 'Aún no tenés créditos aprobados.';
+  const totals = computeTotals(state.approved);
+  const totalEl = document.getElementById('totalCredits');
+  totalEl.textContent = totals.total;
+  // bar fill (max 180)
+  const fill = Math.min(100, Math.round((totals.total/180)*100));
+  document.getElementById('barFill').style.width = fill + '%';
+
+  // area credits list
+  const areaDiv = document.getElementById('areaCredits');
+  areaDiv.innerHTML = '';
+  // show a few relevant areas
+  const interesting = ['Contabilidad y Auditoría','Administración','Economía','Métodos Cuantitativos','Impuestos y Normativa','Gestión y Tecnología'];
+  for(const a of interesting){
+    const val = totals.area[a] || 0;
+    const node = document.createElement('div');
+    node.style.display='flex';
+    node.style.justifyContent='space-between';
+    node.style.fontSize='13px';
+    node.innerHTML = `<div>${a}</div><div><b>${val}</b> cr</div>`;
+    areaDiv.appendChild(node);
+  }
 }
 
-// reset
-document.getElementById('resetBtn').addEventListener('click', ()=>{
-  if(!confirm('¿Restablecer todo el progreso? Esta acción no puede deshacerse.')) return;
-  state = { approved: {} };
-  saveState();
+/* re-render but keep some small state */
+function updateAll(){
   render();
-  updateSummary();
+}
+
+/* Reset button */
+document.getElementById('resetBtn').addEventListener('click', ()=>{
+  if(confirm('¿Borrar todo el progreso guardado en este navegador?')){
+    state.approved = {};
+    saveState(state);
+    updateAll();
+  }
 });
 
-// exportar/importar
-document.getElementById('exportBtn').addEventListener('click', ()=>{
-  const data = JSON.stringify(state, null, 2);
-  // abrir prompt para copiar/pegar o importar
-  const w = window.open('', '', 'width=700,height=520');
-  w.document.body.style.fontFamily = 'Inter,Arial, sans-serif';
-  w.document.body.innerHTML = '<h3>Exportar / Importar Progreso</h3><p>Copia el texto para exportar. Para importar, pega el JSON abajo y haz click en "Importar".</p><textarea id="txt" style="width:95%;height:320px;font-family:monospace;">' + data + '</textarea><div style="margin-top:8px"><button id="doImport">Importar</button><button id="doClose" style="margin-left:8px">Cerrar</button></div>';
-  w.document.getElementById('doClose').addEventListener('click', ()=>w.close());
-  w.document.getElementById('doImport').addEventListener('click', ()=>{
-    const txt = w.document.getElementById('txt').value;
-    try{
-      const parsed = JSON.parse(txt);
-      if(parsed && parsed.approved){
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
-        loadState();
-        render();
-        updateSummary();
-        alert('Importación exitosa');
-      } else {
-        alert('JSON inválido (no contiene approved).');
-      }
-    }catch(e){
-      alert('JSON inválido: ' + e.message);
-    }
-  });
-});
-
-// inicializar
-loadState();
+/* initial render */
 render();
-updateSummary();
 
-// Guardar auto cuando hay cambios en otra pestaña
-window.addEventListener('storage', (e)=>{
-  if(e.key === STORAGE_KEY){
-    loadState();
-    render();
-    updateSummary();
+/* Some accessibility: keyboard toggles */
+document.addEventListener('keydown',(e)=>{
+  if(e.key==='r' && (e.ctrlKey || e.metaKey)){
+    e.preventDefault();
+    if(confirm('¿Reiniciar progreso?')){ state.approved={}; saveState(state); updateAll(); }
   }
 });
 </script>
